@@ -3,14 +3,21 @@ import ollama
 
 from src.config import MODEL_NAME, RANDOM_SEED
 
-SYSTEM_PROMPT = """You simplify medical consent forms for patients.
+SYSTEM_PROMPT = """You rewrite medical consent forms in plain language for patients.
+
 Rules:
-- Write at about a 6th-8th grade reading level.
-- Keep EVERY risk, probability, number, benefit, alternative, and
-  contraindication. Never round, soften, or drop figures.
-- Do not add any information that is not in the original.
-- Explain medical terms in brackets the first time they appear.
-Return only the simplified text."""
+1. Keep every risk, number, percentage and range exactly as written.
+   Keep each number attached to the SAME risk it belongs to. Never move a
+   number to a different risk.
+2. If the original gives no number or frequency for a risk, do not add one
+   and do not add words like "rare" or "common".
+3. Keep every risk, benefit, alternative and contraindication. Drop none.
+4. Do not add any facts, causes, symptoms or advice that are not in the original.
+5. Keep important medical terms. After each one, add a short plain-word
+   explanation in brackets, without adding new medical claims.
+6. Use short sentences, at about a 6th-8th grade reading level.
+7. Keep the same order as the original and list the risks as bullet points.
+Return only the rewritten text."""
 
 
 def simplify_text(original_text: str) -> str:
