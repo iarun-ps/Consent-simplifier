@@ -1,0 +1,10 @@
+anthropic>=0.40
+python-dotenv>=1.0
+pandas>=2.2
+scikit-learn>=1.5
+textstat>=0.7
+spacy>=3.7
+streamlit>=1.38
+pytest>=8.0
+black>=24.0
+ruff>=0.6
