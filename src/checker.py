@@ -22,11 +22,8 @@ def _clean(number: str) -> str:
     return f"{float(number):g}"
 
 
-def extract_numbers(text: str) -> list[str]:
-    """Return numbers, ranges and percentages in a normal form.
-
-    "2-5%", "2 to 5 percent" and "2–5%" all become "2-5%".
-    """
+def _numbers_with_positions(text: str) -> list[tuple[str, int]]:
+    """Return (number in normal form, position in the text) for each number."""
     found = []
     for match in NUMBER_PATTERN.finditer(text):
         value = _clean(match.group("first"))
@@ -34,8 +31,16 @@ def extract_numbers(text: str) -> list[str]:
             value += "-" + _clean(match.group("second"))
         if match.group("pct"):
             value += "%"
-        found.append(value)
+        found.append((value, match.start()))
     return found
+
+
+def extract_numbers(text: str) -> list[str]:
+    """Return numbers, ranges and percentages in a normal form.
+
+    "2-5%", "2 to 5 percent" and "2–5%" all become "2-5%".
+    """
+    return [value for value, _position in _numbers_with_positions(text)]
 
 
 # Each entry: (name, category, words that mark it in the original,
@@ -146,6 +151,69 @@ def find_missing_key_terms(original: str, simplified: str) -> list[str]:
     return missing
 
 
+# A new sentence starts after . ! ? and a space, at a bullet point, or after
+# a blank line.
+_UNIT_SPLIT = re.compile(r"(?<=[.!?])\s+|\n\s*[•\-*]\s*|\n\s*\n")
+
+
+def _split_units(text: str) -> list[str]:
+    """Split text into sentences and bullet points."""
+    units = _UNIT_SPLIT.split(text)
+    return [" ".join(unit.split()) for unit in units if unit.strip()]
+
+
+def _term_positions(unit: str, use_original_wording: bool) -> list[tuple[int, str]]:
+    """Return (position, term name) for every key term found in the unit."""
+    found = []
+    for name, _category, in_original, in_simplified in KEY_TERMS:
+        phrases = in_original if use_original_wording else in_simplified
+        for phrase in phrases:
+            for match in re.finditer(rf"\b{re.escape(phrase)}", unit, re.IGNORECASE):
+                found.append((match.start(), name))
+    return found
+
+
+def _link_numbers(
+    text: str, use_original_wording: bool
+) -> list[tuple[str, str | None]]:
+    """Pair each number with the key term it belongs to.
+
+    Rule: the nearest key term before the number in the same sentence or
+    bullet point; if there is none, the first key term after it.
+    None means no key term was found.
+    """
+    pairs = []
+    for unit in _split_units(text):
+        terms = sorted(_term_positions(unit, use_original_wording))
+        for value, position in _numbers_with_positions(unit):
+            before = [name for start, name in terms if start < position]
+            after = [name for start, name in terms if start > position]
+            if before:
+                term = before[-1]
+            elif after:
+                term = after[0]
+            else:
+                term = None
+            pairs.append((value, term))
+    return pairs
+
+
+def find_number_risk_mismatches(original: str, simplified: str) -> list[dict]:
+    """Find numbers that moved next to a different risk than in the original."""
+    expected: dict[str, set[str]] = {}
+    for value, term in _link_numbers(original, use_original_wording=True):
+        if term:
+            expected.setdefault(value, set()).add(term)
+
+    mismatches = []
+    for value, term in _link_numbers(simplified, use_original_wording=False):
+        if term and value in expected and term not in expected[value]:
+            mismatches.append(
+                {"number": value, "expected": sorted(expected[value]), "found": term}
+            )
+    return mismatches
+
+
 def check_preservation(original: str, simplified: str) -> dict:
     """Compare original and simplified text; return a report dictionary."""
     original_numbers = Counter(extract_numbers(original))
@@ -153,10 +221,18 @@ def check_preservation(original: str, simplified: str) -> dict:
 
     missing_numbers = sorted((original_numbers - simplified_numbers).elements())
     fabricated_numbers = sorted((simplified_numbers - original_numbers).elements())
+    number_risk_mismatches = find_number_risk_mismatches(original, simplified)
     missing_key_terms = find_missing_key_terms(original, simplified)
+
     return {
         "missing_numbers": missing_numbers,
         "possible_fabricated_numbers": fabricated_numbers,
+        "number_risk_mismatches": number_risk_mismatches,
         "missing_key_terms": missing_key_terms,
-        "passed": not (missing_numbers or fabricated_numbers or missing_key_terms),
+        "passed": not (
+            missing_numbers
+            or fabricated_numbers
+            or number_risk_mismatches
+            or missing_key_terms
+        ),
     }
