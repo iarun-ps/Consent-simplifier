@@ -214,6 +214,95 @@ def find_number_risk_mismatches(original: str, simplified: str) -> list[dict]:
     return mismatches
 
 
+# Frequency words and how often they mean. A higher level means more often.
+FREQUENCY_WORDS = {
+    "extremely rare": 1,
+    "very rare": 1,
+    "very rarely": 1,
+    "rare": 2,
+    "rarely": 2,
+    "uncommon": 3,
+    "infrequent": 3,
+    "occasionally": 3,
+    "sometimes": 3,
+    "common": 4,
+    "commonly": 4,
+    "frequent": 4,
+    "frequently": 4,
+    "often": 4,
+    "very common": 5,
+    "very often": 5,
+}
+
+# For each key term: the wording that counts as "kept" in the simplified text.
+_SIMPLIFIED_WORDING = {name: wording for name, _cat, _orig, wording in KEY_TERMS}
+
+
+def _frequency_words(unit: str) -> list[tuple[int, str]]:
+    """Return (position, frequency word) for each frequency word in the unit.
+
+    Longer phrases are matched first, so "very rare" is not also counted as "rare".
+    """
+    found = []
+    used = []  # (start, end) of text already matched by a longer phrase
+    for word in sorted(FREQUENCY_WORDS, key=len, reverse=True):
+        for match in re.finditer(rf"\b{re.escape(word)}\b", unit, re.IGNORECASE):
+            overlaps = any(
+                match.start() < end and start < match.end() for start, end in used
+            )
+            if not overlaps:
+                used.append((match.start(), match.end()))
+                found.append((match.start(), word))
+    return found
+
+
+def _nearest_term(terms: list[tuple[int, str]], position: int) -> str | None:
+    """The nearest key term before the position, otherwise the first one after it."""
+    before = [name for start, name in terms if start < position]
+    after = [name for start, name in terms if start > position]
+    if before:
+        return before[-1]
+    if after:
+        return after[0]
+    return None
+
+
+def _frequency_by_term(text: str, use_original_wording: bool) -> dict[str, list[str]]:
+    """Map each key term to the frequency words that belong to it."""
+    linked: dict[str, list[str]] = {}
+    for unit in _split_units(text):
+        terms = sorted(_term_positions(unit, use_original_wording))
+        for position, word in _frequency_words(unit):
+            term = _nearest_term(terms, position)
+            if term:
+                linked.setdefault(term, []).append(word)
+    return linked
+
+
+def find_frequency_changes(original: str, simplified: str) -> list[dict]:
+    """Find frequency words that were dropped or changed for the same risk."""
+    expected = _frequency_by_term(original, use_original_wording=True)
+    found = _frequency_by_term(simplified, use_original_wording=False)
+
+    changes = []
+    for term, original_words in expected.items():
+        if not _mentions(simplified, _SIMPLIFIED_WORDING[term]):
+            continue  # the term itself is missing; find_missing_key_terms reports it
+        simplified_words = found.get(term, [])
+        original_levels = {FREQUENCY_WORDS[w] for w in original_words}
+        simplified_levels = {FREQUENCY_WORDS[w] for w in simplified_words}
+        if original_levels != simplified_levels:
+            changes.append(
+                {
+                    "term": term,
+                    "kind": "changed" if simplified_words else "dropped",
+                    "original": original_words,
+                    "simplified": simplified_words,
+                }
+            )
+    return changes
+
+
 def check_preservation(original: str, simplified: str) -> dict:
     """Compare original and simplified text; return a report dictionary."""
     original_numbers = Counter(extract_numbers(original))
@@ -223,16 +312,19 @@ def check_preservation(original: str, simplified: str) -> dict:
     fabricated_numbers = sorted((simplified_numbers - original_numbers).elements())
     number_risk_mismatches = find_number_risk_mismatches(original, simplified)
     missing_key_terms = find_missing_key_terms(original, simplified)
+    frequency_changes = find_frequency_changes(original, simplified)
 
     return {
         "missing_numbers": missing_numbers,
         "possible_fabricated_numbers": fabricated_numbers,
         "number_risk_mismatches": number_risk_mismatches,
         "missing_key_terms": missing_key_terms,
+        "frequency_changes": frequency_changes,
         "passed": not (
             missing_numbers
             or fabricated_numbers
             or number_risk_mismatches
             or missing_key_terms
+            or frequency_changes
         ),
     }

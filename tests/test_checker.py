@@ -3,6 +3,7 @@ from pathlib import Path
 from src.checker import (
     check_preservation,
     extract_numbers,
+    find_frequency_changes,
     find_missing_key_terms,
     find_number_risk_mismatches,
 )
@@ -123,3 +124,43 @@ def test_bullet_without_known_risk_is_not_blamed_on_previous_bullet():
     original = "Risks include infection (2%) and hemorrhage (5%)."
     simplified = "Risks:\n- Infection (2%)\n- Bleeding (5%)"
     assert find_number_risk_mismatches(original, simplified) == []
+
+
+def test_rare_changed_to_very_rare_is_flagged():
+    original = (
+        "Infection is common. "
+        "In rare cases, conversion to open surgery may be required."
+    )
+    simplified = (
+        "Infection is common. "
+        "In very rare cases, conversion to open surgery may be required."
+    )
+    assert find_frequency_changes(original, simplified) == [
+        {
+            "term": "conversion to open surgery",
+            "kind": "changed",
+            "original": ["rare"],
+            "simplified": ["very rare"],
+        }
+    ]
+
+
+def test_dropped_frequency_word_is_flagged():
+    original = "In rare cases, conversion to open surgery may be required."
+    simplified = "Conversion to open surgery may be required."
+    result = find_frequency_changes(original, simplified)
+    assert [(c["term"], c["kind"]) for c in result] == [
+        ("conversion to open surgery", "dropped")
+    ]
+
+
+def test_same_frequency_level_passes():
+    original = "In rare cases, conversion to open surgery may be required."
+    simplified = "Rarely, conversion to open surgery may be needed."
+    assert find_frequency_changes(original, simplified) == []
+
+
+def test_missing_term_is_not_reported_as_frequency_change():
+    original = "In rare cases, conversion to open surgery may be required."
+    simplified = "The surgery might need to be done the old way."
+    assert find_frequency_changes(original, simplified) == []
