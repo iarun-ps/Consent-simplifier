@@ -9,3 +9,11 @@
 - Benefit generalised; biliary colic and gallstone complications lost.
 - Medical terms not explained in brackets.
 - Conclusion: prompt tuning has limited effect on a 3B model; a checker is needed.
+
+## v5.1 (v5 with a non-medical example in the prompt)
+- Invented antibiotics line gone; all numbers, "rare" and the benefit correct.
+- Glossary meanings added once each by terms.py, including in the heading.
+- Remaining errors: "cardiopulmonary" narrowed to "heart"; open surgery conversion worded as "the old way";
+  "uncorrected coagulopathy" softened to "uncorrected bleeding problems" (no explanation added);
+  "hemorrhage" dropped; dietary changes listed as a separate option; nested brackets after thromboembolism.
+- Conclusion: prompt tuning has reached its limit for llama3.2:3b. Remaining errors are test cases for the checker.
