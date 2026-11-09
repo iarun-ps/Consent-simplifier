@@ -1,0 +1,14 @@
+form,model_run,item_type,item,status,note,checker_term
+sample_form,v5_1,risk,infection (2-5%),kept,same number and risk,infection
+sample_form,v5_1,risk,hemorrhage requiring transfusion (less than 1%),altered,heavy bleeding never named - only transfusion,hemorrhage
+sample_form,v5_1,risk,bile duct injury (0.3-0.5%),kept,same number and risk,bile duct injury
+sample_form,v5_1,risk,thromboembolism,kept,explained as blood clot (messy brackets),thromboembolism
+sample_form,v5_1,risk,adverse cardiopulmonary events in patients with cardiac conditions,altered,lungs lost - only heart named,cardiopulmonary events
+sample_form,v5_1,risk,conversion to open surgery in rare cases (about 2%),altered,worded as the old way - open surgery not named,conversion to open surgery
+sample_form,v5_1,alternative,non-surgical management,kept,named in brackets,non-surgical management
+sample_form,v5_1,alternative,dietary modification,altered,listed as a separate option - unsure,dietary modification
+sample_form,v5_1,alternative,observation,kept,worded as watching for signs,observation
+sample_form,v5_1,alternative,open cholecystectomy,kept,worded as open surgery,open cholecystectomy
+sample_form,v5_1,contraindication,uncorrected coagulopathy,altered,not recommended is softer than contraindicated and bleeding problems is vaguer - unsure,coagulopathy
+sample_form,v5_1,benefit,relief of biliary colic,kept,explained in brackets,biliary colic
+sample_form,v5_1,benefit,prevention of recurrent gallstone complications,kept,worded as preventing future gallstone problems,gallstone complications
