@@ -328,3 +328,20 @@ def check_preservation(original: str, simplified: str) -> dict:
             or frequency_changes
         ),
     }
+
+
+if __name__ == "__main__":
+    import argparse
+    import json
+    from pathlib import Path
+
+    parser = argparse.ArgumentParser(description="Check a simplified consent form.")
+    parser.add_argument("--original", required=True, help="Original form (.txt)")
+    parser.add_argument("--simplified", required=True, help="Simplified form (.txt)")
+    args = parser.parse_args()
+
+    report = check_preservation(
+        Path(args.original).read_text(encoding="utf-8"),
+        Path(args.simplified).read_text(encoding="utf-8"),
+    )
+    print(json.dumps(report, indent=2))
