@@ -1,4 +1,4 @@
-"""Run the pipeline on one consent form.
+"""Run the full pipeline on one consent form: simplify, check, score readability.
 
 Usage: python -m src.pipeline --input data/original/sample_form.txt
 """
@@ -6,6 +6,7 @@ import argparse
 import json
 from pathlib import Path
 
+from src.checker import check_preservation
 from src.evaluate import readability
 from src.simplify import simplify_text
 
@@ -27,12 +28,13 @@ def main() -> None:
     result = {
         "readability_before": readability(original),
         "readability_after": readability(simplified),
+        "preservation_report": check_preservation(original, simplified),
     }
     Path("results").mkdir(exist_ok=True)
     Path(f"results/{name}_report.json").write_text(
-        json.dumps(result, indent=2), encoding="utf-8"
+        json.dumps(result, indent=2, default=str), encoding="utf-8"
     )
-    print(json.dumps(result, indent=2))
+    print(json.dumps(result, indent=2, default=str))
 
 
 if __name__ == "__main__":
