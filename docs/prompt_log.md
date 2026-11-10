@@ -17,3 +17,10 @@
   "uncorrected coagulopathy" softened to "uncorrected bleeding problems" (no explanation added);
   "hemorrhage" dropped; dietary changes listed as a separate option; nested brackets after thromboembolism.
 - Conclusion: prompt tuning has reached its limit for llama3.2:3b. Remaining errors are test cases for the checker.
+- v5.1 readability on sample_form.txt: Flesch reading ease 0.9 -> 36.9, Flesch-Kincaid grade 16.1 -> 13.9.
+  (The earlier 62.4 / 7.6 scores belong to v5, not v5.1.)
+- Same form, temperature 0, seed 42 gave identical text on a second run (reproducible).
+- Likely reason for the lower score than v5: bracket explanations lengthen words and sentences,
+  and bullet lines without full stops are counted as one long sentence by the readability tool.
+- Pipeline now runs the preservation checker; it reports missing "hemorrhage",
+  "cardiopulmonary events" and "conversion to open surgery", with no number problems.

@@ -6,5 +6,17 @@
   "readability_after": {
     "flesch_reading_ease": 36.914523809523814,
     "flesch_kincaid_grade": 13.907142857142862
+  },
+  "preservation_report": {
+    "missing_numbers": [],
+    "possible_fabricated_numbers": [],
+    "number_risk_mismatches": [],
+    "missing_key_terms": [
+      "hemorrhage",
+      "cardiopulmonary events",
+      "conversion to open surgery"
+    ],
+    "frequency_changes": [],
+    "passed": false
   }
 }
