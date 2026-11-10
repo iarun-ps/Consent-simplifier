@@ -24,3 +24,16 @@
   and bullet lines without full stops are counted as one long sentence by the readability tool.
 - Pipeline now runs the preservation checker; it reports missing "hemorrhage",
   "cardiopulmonary events" and "conversion to open surgery", with no number problems.
+
+## Second form: laparoscopic_cholecystectomy_ankara.txt (prompt v5.1, llama3.2:3b)
+- Readability: Flesch reading ease 43.0 -> 49.5, Flesch-Kincaid grade 10.5 -> 9.8 (small change; most list items were copied).
+- Checker output: 24 false "missing numbers" (list markers 2.1 to 5.5) plus one real miss, "95%".
+- Errors found by hand that the checker missed: lost conditions on the 3% conversion rate; "acute or chronic"
+  and "inflammation" dropped; "required anesthetic procedure" dropped; "solely" lost in 5.2; "that can replace
+  this form of treatment" dropped in 5.4.
+- Model introduced the misspelling "Laporoscopic", so the glossary could not annotate it; the original typo
+  "post-cholecystecomy" was also not annotated.
+- Sections 2 to 4 were copied almost word for word; many terms (cystic duct, abscess, trocar, perforated,
+  lacerated, postprandial) are not in the glossary.
+- Takeaways: checker key terms and number rules need to generalise beyond the first form; glossary needs
+  more terms; the 3B model copies list items instead of simplifying them.

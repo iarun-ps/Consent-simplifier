@@ -1,0 +1,44 @@
+{
+  "readability_before": {
+    "flesch_reading_ease": 42.97368243243244,
+    "flesch_kincaid_grade": 10.488209459459462
+  },
+  "readability_after": {
+    "flesch_reading_ease": 49.4692632310595,
+    "flesch_kincaid_grade": 9.791343461423892
+  },
+  "preservation_report": {
+    "missing_numbers": [
+      "2.1",
+      "2.2",
+      "2.3",
+      "2.4",
+      "3.1",
+      "3.2",
+      "3.3",
+      "3.4",
+      "3.5",
+      "3.6",
+      "3.7",
+      "4.1",
+      "4.2",
+      "4.3",
+      "4.4",
+      "4.5",
+      "4.6",
+      "4.7",
+      "4.8",
+      "5.1",
+      "5.2",
+      "5.3",
+      "5.4",
+      "5.5",
+      "95%"
+    ],
+    "possible_fabricated_numbers": [],
+    "number_risk_mismatches": [],
+    "missing_key_terms": [],
+    "frequency_changes": [],
+    "passed": false
+  }
+}
