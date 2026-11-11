@@ -322,6 +322,72 @@ def find_frequency_changes(original: str, simplified: str) -> list[dict]:
     return changes
 
 
+# Qualifier words limit or condition a statement, so losing one changes its
+# meaning ("solely", "acute or chronic", "depending on ..."). Each entry is
+# (name, forms in the original, forms accepted in the simplified text). Whole
+# words only. The check compares how often they occur, because the same word
+# can appear in other sentences too.
+QUALIFIERS = [
+    (
+        "only/solely",
+        ["only", "solely"],
+        ["only", "solely", "just", "alone", "no other", "no alternative"],
+    ),
+    (
+        "acute/chronic",
+        ["acute", "chronic"],
+        ["acute", "chronic", "sudden", "long-term", "long term", "short-term"],
+    ),
+    (
+        "depends on",
+        ["depending on", "depends on", "depending upon"],
+        ["depend", "depends", "depending"],
+    ),
+    (
+        "severity",
+        [
+            "severe",
+            "massive",
+            "major",
+            "serious",
+            "significant",
+            "life-threatening",
+            "excessive",
+        ],
+        [
+            "severe",
+            "massive",
+            "major",
+            "serious",
+            "significant",
+            "life-threatening",
+            "excessive",
+            "heavy",
+        ],
+    ),
+]
+
+
+def _count_words(text: str, phrases: list[str]) -> int:
+    """How many times any of the phrases occurs in the text as whole words."""
+    return sum(
+        len(re.findall(rf"\b{re.escape(p)}\b", text, re.IGNORECASE)) for p in phrases
+    )
+
+
+def find_missing_qualifiers(original: str, simplified: str) -> list[dict]:
+    """Return qualifier words that occur less often in the simplified text."""
+    missing = []
+    for name, in_original, in_simplified in QUALIFIERS:
+        before = _count_words(original, in_original)
+        after = _count_words(simplified, in_simplified)
+        if after < before:
+            missing.append(
+                {"qualifier": name, "original": before, "simplified": after}
+            )
+    return missing
+
+
 def check_preservation(original: str, simplified: str) -> dict:
     """Compare original and simplified text; return a report dictionary."""
     original_numbers = Counter(extract_numbers(original))
@@ -332,6 +398,7 @@ def check_preservation(original: str, simplified: str) -> dict:
     number_risk_mismatches = find_number_risk_mismatches(original, simplified)
     missing_key_terms = find_missing_key_terms(original, simplified)
     frequency_changes = find_frequency_changes(original, simplified)
+    missing_qualifiers = find_missing_qualifiers(original, simplified)
 
     return {
         "missing_numbers": missing_numbers,
@@ -339,12 +406,14 @@ def check_preservation(original: str, simplified: str) -> dict:
         "number_risk_mismatches": number_risk_mismatches,
         "missing_key_terms": missing_key_terms,
         "frequency_changes": frequency_changes,
+        "missing_qualifiers": missing_qualifiers,
         "passed": not (
             missing_numbers
             or fabricated_numbers
             or number_risk_mismatches
             or missing_key_terms
             or frequency_changes
+            or missing_qualifiers
         ),
     }
 

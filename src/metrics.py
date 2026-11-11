@@ -35,6 +35,7 @@ def report_flags(report: dict) -> set[str]:
     flags |= {f"fabricated:{n}" for n in report["possible_fabricated_numbers"]}
     flags |= {f"mismatch:{m['number']}" for m in report["number_risk_mismatches"]}
     flags |= {f"frequency:{c['term']}" for c in report["frequency_changes"]}
+    flags |= {f"qualifier:{q['qualifier']}" for q in report.get("missing_qualifiers", [])}
     return flags
 
 

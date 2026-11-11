@@ -91,3 +91,16 @@ def test_every_annotated_run_is_registered_and_has_files():
     for original_path, simplified_path in RUNS.values():
         assert Path(original_path).exists()
         assert Path(simplified_path).exists()
+
+def test_report_flags_includes_qualifiers():
+    report = {
+        "missing_numbers": [],
+        "possible_fabricated_numbers": [],
+        "number_risk_mismatches": [],
+        "missing_key_terms": [],
+        "frequency_changes": [],
+        "missing_qualifiers": [
+            {"qualifier": "acute/chronic", "original": 2, "simplified": 0}
+        ],
+    }
+    assert report_flags(report) == {"qualifier:acute/chronic"}
