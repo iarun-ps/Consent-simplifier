@@ -164,3 +164,30 @@ def test_missing_term_is_not_reported_as_frequency_change():
     original = "In rare cases, conversion to open surgery may be required."
     simplified = "The surgery might need to be done the old way."
     assert find_frequency_changes(original, simplified) == []
+
+def test_list_markers_are_not_numbers():
+    text = (
+        "1. Introduction\n"
+        "2.1 Risks of surgery\n"
+        "2.2. Bleeding may occur in 3% of patients\n"
+        "(3) Infection\n"
+        "4) Pain"
+    )
+    assert extract_numbers(text) == ["3%"]
+
+
+def test_decimal_at_line_start_is_still_a_number():
+    assert extract_numbers("2.5 mg is given\n0.5% of patients") == ["2.5", "0.5%"]
+
+
+def test_renumbered_list_does_not_cause_missing_numbers():
+    original = "2.1 Infection may occur.\n2.2 Bleeding may occur."
+    simplified = "- Infection may occur.\n- Bleeding may occur."
+    assert check_preservation(original, simplified)["missing_numbers"] == []
+
+
+def test_real_number_is_still_found_next_to_list_markers():
+    original = "5.1 Success rate is more than 95%.\n5.2 Conversion occurs in 3% of cases."
+    simplified = "- Success is high.\n- Conversion occurs in 3% of cases."
+    result = check_preservation(original, simplified)
+    assert result["missing_numbers"] == ["95%"]
