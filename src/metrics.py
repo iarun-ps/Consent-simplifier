@@ -9,6 +9,18 @@ from src.checker import check_preservation
 # Statuses in the annotation that count as a real problem.
 PROBLEM_STATUSES = {"missing", "altered", "invented"}
 
+# Where the original and simplified text of each annotated run are stored.
+RUNS = {
+    ("sample_form", "v5_1"): (
+        "data/original/sample_form.txt",
+        "tests/fixtures/v5_1_simplified.txt",
+    ),
+    ("laparoscopic_cholecystectomy_ankara", "v5_1"): (
+        "data/original/laparoscopic_cholecystectomy_ankara.txt",
+        "data/simplified/laparoscopic_cholecystectomy_ankara_simplified.txt",
+    ),
+}
+
 
 def load_annotations(path: str) -> list[dict]:
     """Read the annotation CSV into a list of rows."""
@@ -16,26 +28,17 @@ def load_annotations(path: str) -> list[dict]:
         return list(csv.DictReader(file))
 
 
-def score_key_terms(rows: list[dict], flagged_terms: list[str]) -> dict:
-    """Compare the checker's flagged key terms with the hand-made labels.
+def report_flags(report: dict) -> set[str]:
+    """Name every finding in a checker report, so findings can be compared."""
+    flags = set(report["missing_key_terms"])
+    flags |= {f"number:{n}" for n in report["missing_numbers"]}
+    flags |= {f"fabricated:{n}" for n in report["possible_fabricated_numbers"]}
+    flags |= {f"mismatch:{m['number']}" for m in report["number_risk_mismatches"]}
+    flags |= {f"frequency:{c['term']}" for c in report["frequency_changes"]}
+    return flags
 
-    Only rows that have a checker_term are scored. A row is a real problem
-    when its status is missing, altered or invented.
-    """
-    tp = fp = fn = 0
-    for row in rows:
-        term = row.get("checker_term")
-        if not term:
-            continue
-        is_problem = row["status"] in PROBLEM_STATUSES
-        flagged = term in flagged_terms
-        if flagged and is_problem:
-            tp += 1
-        elif flagged:
-            fp += 1
-        elif is_problem:
-            fn += 1
 
+def _scores(tp: int, fp: int, fn: int) -> dict:
     precision = tp / (tp + fp) if tp + fp else 0.0
     recall = tp / (tp + fn) if tp + fn else 0.0
     f1 = 2 * precision * recall / (precision + recall) if precision + recall else 0.0
@@ -47,6 +50,23 @@ def score_key_terms(rows: list[dict], flagged_terms: list[str]) -> dict:
         "recall": round(recall, 3),
         "f1": round(f1, 3),
     }
+
+
+def score_flags(rows: list[dict], flags: set[str]) -> dict:
+    """Compare the checker's findings with the hand-made labels.
+
+    A row is a real problem when its status is missing, altered or invented.
+    It is found when the finding named in its checker_term column was raised.
+    A real problem with no checker_term is a miss: the checker has no rule for it.
+    A finding that no real problem claims is a false alarm.
+    """
+    problems = [row for row in rows if row["status"] in PROBLEM_STATUSES]
+    found = [row for row in problems if row.get("checker_term") in flags]
+    claimed = {row["checker_term"] for row in problems if row.get("checker_term")}
+    tp = len(found)
+    fn = len(problems) - tp
+    fp = len(flags - claimed)
+    return _scores(tp, fp, fn)
 
 
 def evaluate_run(
@@ -65,15 +85,24 @@ def evaluate_run(
     original = Path(original_path).read_text(encoding="utf-8")
     simplified = Path(simplified_path).read_text(encoding="utf-8")
     report = check_preservation(original, simplified)
-    return score_key_terms(rows, report["missing_key_terms"])
+    return score_flags(rows, report_flags(report))
+
+
+def evaluate_all(annotations_path: str = "data/annotations.csv") -> dict:
+    """Score every annotated run, then add up the counts for an overall score."""
+    results = {}
+    tp = fp = fn = 0
+    for (form, model_run), (original_path, simplified_path) in RUNS.items():
+        result = evaluate_run(
+            annotations_path, form, model_run, original_path, simplified_path
+        )
+        results[f"{form} {model_run}"] = result
+        tp += result["true_positives"]
+        fp += result["false_positives"]
+        fn += result["false_negatives"]
+    results["overall"] = _scores(tp, fp, fn)
+    return results
 
 
 if __name__ == "__main__":
-    result = evaluate_run(
-        "data/annotations.csv",
-        "sample_form",
-        "v5_1",
-        "data/original/sample_form.txt",
-        "tests/fixtures/v5_1_simplified.txt",
-    )
-    print(json.dumps(result, indent=2))
+    print(json.dumps(evaluate_all(), indent=2))
