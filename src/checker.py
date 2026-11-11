@@ -17,6 +17,25 @@ NUMBER_PATTERN = re.compile(
 )
 
 
+# A list or section number at the start of a line: 2.1, 2.2., 3., 4) or (5).
+# It is only treated as a marker when text follows, and not when a unit such
+# as mg or days follows (so "2.5 mg" is still a number).
+_LIST_MARKER = re.compile(
+    r"^(?P<prefix>[ \t]*(?:[•\-*][ \t]*)?)"
+    r"(?P<marker>\d+(?:\.\d+)+\.?|\(?\d+[.)])"
+    r"(?=[ \t]+[A-Za-z(])"
+    r"(?![ \t]+(?:mg|ml|mm|cm|kg|percent|days?|weeks?|hours?|minutes?|years?)\b)",
+    re.MULTILINE,
+)
+
+
+def _remove_list_markers(text: str) -> str:
+    """Blank out list and section numbers. The text keeps its length."""
+    return _LIST_MARKER.sub(
+        lambda match: match.group("prefix") + " " * len(match.group("marker")), text
+)
+
+
 def _clean(number: str) -> str:
     """Write 0.50 and 0.5 the same way."""
     return f"{float(number):g}"
@@ -40,8 +59,8 @@ def extract_numbers(text: str) -> list[str]:
 
     "2-5%", "2 to 5 percent" and "2–5%" all become "2-5%".
     """
-    return [value for value, _position in _numbers_with_positions(text)]
-
+    cleaned = _remove_list_markers(text)
+    return [value for value, _position in _numbers_with_positions(cleaned)]
 
 # Each entry: (name, category, words that mark it in the original,
 #              wording accepted as "kept" in the simplified text).
@@ -158,7 +177,7 @@ _UNIT_SPLIT = re.compile(r"(?<=[.!?])\s+|\n\s*[•\-*]\s*|\n\s*\n")
 
 def _split_units(text: str) -> list[str]:
     """Split text into sentences and bullet points."""
-    units = _UNIT_SPLIT.split(text)
+    units = _UNIT_SPLIT.split(_remove_list_markers(text))
     return [" ".join(unit.split()) for unit in units if unit.strip()]
 
 
