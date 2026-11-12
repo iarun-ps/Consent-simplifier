@@ -12,3 +12,32 @@ sample_form,v5_1,alternative,open cholecystectomy,kept,worded as open surgery,op
 sample_form,v5_1,contraindication,uncorrected coagulopathy,altered,not recommended is softer than contraindicated and bleeding problems is vaguer - unsure,coagulopathy
 sample_form,v5_1,benefit,relief of biliary colic,kept,explained in brackets,biliary colic
 sample_form,v5_1,benefit,prevention of recurrent gallstone complications,kept,worded as preventing future gallstone problems,gallstone complications
+laparoscopic_cholecystectomy_ankara,v5_1,info,acute or chronic cholelithiasis (inflammation of the gallbladder from one or several stones),altered,acute or chronic and inflammation and one or multiple lost - now only a gallbladder problem due to stones,qualifier:acute/chronic
+laparoscopic_cholecystectomy_ankara,v5_1,info,no alternative treatment (surgery is the only treatment),kept,simplified says there is no other treatment - original sentence is incomplete - unsure,
+laparoscopic_cholecystectomy_ankara,v5_1,number,success rate of more than 95%,missing,dropped completely,number:95%
+laparoscopic_cholecystectomy_ankara,v5_1,info,untreated symptoms worsen over time,kept,,
+laparoscopic_cholecystectomy_ankara,v5_1,risk,jaundice if the main cystic duct is blocked by gallstones,kept,,
+laparoscopic_cholecystectomy_ankara,v5_1,info,surgery removes the gallbladder through 4 small ports (closed method),kept,closed method label dropped (minor),
+laparoscopic_cholecystectomy_ankara,v5_1,info,symptoms (abdominal pain; indigestion; distention) usually resolve after surgery,kept,distention shown as bloating,
+laparoscopic_cholecystectomy_ankara,v5_1,risk,laparoscopic-specific complications 2.1 to 2.4 (organ injury; major vessel injury; gas leakage x2),kept,copied almost word for word,
+laparoscopic_cholecystectomy_ankara,v5_1,risk,3% conversion to open surgery depending on technical difficulties and structural problems and stage of disease,altered,3% kept but the three conditions are lost,qualifier:depends on
+laparoscopic_cholecystectomy_ankara,v5_1,risk,main cystic duct may be tied or lacerated or damaged,kept,,
+laparoscopic_cholecystectomy_ankara,v5_1,risk,vessels supplying the liver may be damaged or cut,kept,,
+laparoscopic_cholecystectomy_ankara,v5_1,risk,massive bleeding from the liver,kept,,
+laparoscopic_cholecystectomy_ankara,v5_1,risk,gallbladder perforation with spill of bile and gallstones,kept,,
+laparoscopic_cholecystectomy_ankara,v5_1,risk,other conditions outside the visual field may not be identified,altered,not included in the visual field lost - unsure,
+laparoscopic_cholecystectomy_ankara,v5_1,risk,gallbladder may not be removed completely,kept,,
+laparoscopic_cholecystectomy_ankara,v5_1,risk,narrowing or obstruction of the main cystic duct after surgery,kept,,
+laparoscopic_cholecystectomy_ankara,v5_1,risk,bile leak and abscess after surgery,kept,,
+laparoscopic_cholecystectomy_ankara,v5_1,risk,excessive bleeding may need a corrective surgery,kept,,
+laparoscopic_cholecystectomy_ankara,v5_1,risk,liver supply may be impaired,kept,,
+laparoscopic_cholecystectomy_ankara,v5_1,risk,fallen gallstones may cause an abscess if not removed,kept,,
+laparoscopic_cholecystectomy_ankara,v5_1,risk,trocar site bleeding or inflammation or hernia,kept,,
+laparoscopic_cholecystectomy_ankara,v5_1,risk,post-cholecystectomy syndrome (indigestion and postprandial pain),kept,original typo kept and term not explained - not a checker issue,
+laparoscopic_cholecystectomy_ankara,v5_1,risk,infection or hernia at the incision if converted to open surgery,kept,,
+laparoscopic_cholecystectomy_ankara,v5_1,consent,informed about diagnosis and treatment and the required anesthetic procedure,altered,required anesthetic procedure lost,
+laparoscopic_cholecystectomy_ankara,v5_1,consent,additional intervention only (solely) to prevent significant harm and save my life,altered,solely lost - reads as a broader permission,qualifier:only/solely
+laparoscopic_cholecystectomy_ankara,v5_1,consent,informed about possible complications and risks,kept,,
+laparoscopic_cholecystectomy_ankara,v5_1,consent,informed about life-threatening risks of refusing procedures that can replace this treatment,altered,that can replace this form of treatment lost,
+laparoscopic_cholecystectomy_ankara,v5_1,consent,other treatments may be needed if complications develop and recovery may be incomplete,kept,Section II reference dropped (minor),
+laparoscopic_cholecystectomy_ankara,v5_1,extra,Here is the rewritten text:,invented,model preamble - not medical content - unsure whether to count,

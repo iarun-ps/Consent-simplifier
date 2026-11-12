@@ -5,6 +5,7 @@ from src.checker import (
     extract_numbers,
     find_frequency_changes,
     find_missing_key_terms,
+    find_missing_qualifiers,
     find_number_risk_mismatches,
 )
 
@@ -164,3 +165,69 @@ def test_missing_term_is_not_reported_as_frequency_change():
     original = "In rare cases, conversion to open surgery may be required."
     simplified = "The surgery might need to be done the old way."
     assert find_frequency_changes(original, simplified) == []
+
+def test_list_markers_are_not_numbers():
+    text = (
+        "1. Introduction\n"
+        "2.1 Risks of surgery\n"
+        "2.2. Bleeding may occur in 3% of patients\n"
+        "(3) Infection\n"
+        "4) Pain"
+    )
+    assert extract_numbers(text) == ["3%"]
+
+
+def test_decimal_at_line_start_is_still_a_number():
+    assert extract_numbers("2.5 mg is given\n0.5% of patients") == ["2.5", "0.5%"]
+
+
+def test_renumbered_list_does_not_cause_missing_numbers():
+    original = "2.1 Infection may occur.\n2.2 Bleeding may occur."
+    simplified = "- Infection may occur.\n- Bleeding may occur."
+    assert check_preservation(original, simplified)["missing_numbers"] == []
+
+
+def test_real_number_is_still_found_next_to_list_markers():
+    original = "5.1 Success rate is more than 95%.\n5.2 Conversion occurs in 3% of cases."
+    simplified = "- Success is high.\n- Conversion occurs in 3% of cases."
+    result = check_preservation(original, simplified)
+    assert result["missing_numbers"] == ["95%"]
+
+def test_dropped_solely_is_flagged():
+    original = "Additional treatment will be given solely to save my life."
+    simplified = "Additional treatment will be given to save my life."
+    assert find_missing_qualifiers(original, simplified) == [
+        {"qualifier": "only/solely", "original": 1, "simplified": 0}
+    ]
+
+
+def test_synonym_counts_as_kept():
+    original = "Additional treatment will be given solely to save my life."
+    simplified = "Additional treatment will be given only to save my life."
+    assert find_missing_qualifiers(original, simplified) == []
+
+
+def test_dropped_acute_or_chronic_is_flagged():
+    result = find_missing_qualifiers("Acute or chronic pain may occur.", "Pain may occur.")
+    assert result == [{"qualifier": "acute/chronic", "original": 2, "simplified": 0}]
+
+
+def test_dropped_condition_on_a_number_is_flagged():
+    original = "Depending on the stage of the disease, conversion occurs in 3% of cases."
+    simplified = "Conversion occurs in 3% of cases."
+    assert find_missing_qualifiers(original, simplified) == [
+        {"qualifier": "depends on", "original": 1, "simplified": 0}
+    ]
+
+
+def test_unchanged_text_has_no_missing_qualifiers():
+    text = "Massive bleeding may occur, but only rarely."
+    assert find_missing_qualifiers(text, text) == []
+
+
+def test_report_includes_missing_qualifiers():
+    result = check_preservation("Pain may occur solely at night.", "Pain may occur at night.")
+    assert result["missing_qualifiers"] == [
+        {"qualifier": "only/solely", "original": 1, "simplified": 0}
+    ]
+    assert result["passed"] is False
