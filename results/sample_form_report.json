@@ -1,11 +1,12 @@
 {
+  "form": "sample_form.txt",
   "readability_before": {
     "flesch_reading_ease": 0.9075064432990132,
     "flesch_kincaid_grade": 16.14493556701031
   },
   "readability_after": {
-    "flesch_reading_ease": 36.914523809523814,
-    "flesch_kincaid_grade": 13.907142857142862
+    "flesch_reading_ease": 44.227077625570786,
+    "flesch_kincaid_grade": 13.13561643835617
   },
   "preservation_report": {
     "missing_numbers": [],
@@ -14,7 +15,9 @@
     "missing_key_terms": [
       "hemorrhage",
       "cardiopulmonary events",
-      "conversion to open surgery"
+      "conversion to open surgery",
+      "dietary modification",
+      "contraindication"
     ],
     "frequency_changes": [],
     "passed": false

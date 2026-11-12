@@ -19,7 +19,7 @@
 - Conclusion: prompt tuning has reached its limit for llama3.2:3b. Remaining errors are test cases for the checker.
 - v5.1 readability on sample_form.txt: Flesch reading ease 0.9 -> 36.9, Flesch-Kincaid grade 16.1 -> 13.9.
   (The earlier 62.4 / 7.6 scores belong to v5, not v5.1.)
-- Same form, temperature 0, seed 42 gave identical text on a second run (reproducible).
+- Same form, temperature 0, seed 42: two consecutive runs gave identical text, but a later batch run differed (see below).
 - Likely reason for the lower score than v5: bracket explanations lengthen words and sentences,
   and bullet lines without full stops are counted as one long sentence by the readability tool.
 - Pipeline now runs the preservation checker; it reports missing "hemorrhage",
@@ -37,3 +37,11 @@
   lacerated, postprandial) are not in the glossary.
 - Takeaways: checker key terms and number rules need to generalise beyond the first form; glossary needs
   more terms; the 3B model copies list items instead of simplifying them.
+
+## Run-to-run variation (sample_form.txt, same prompt v5.1, model, temperature 0, seed 42)
+- A later batch run changed the text in four places (dietary option reworded, contraindication reworded,
+  "expected benefit" became "the good things", "patients" became "people"). Grade after: 13.9 -> 13.1.
+- Key terms flagged rose from 3 to 5: the checker now also flags "dietary modification" and "contraindication".
+- Takeaway: temperature 0 and a fixed seed reduce variation but do not remove it. Report results as single runs
+  or repeat each form several times. The checker matches phrases, not meaning ("not recommended" passed,
+  "not good for" did not).
