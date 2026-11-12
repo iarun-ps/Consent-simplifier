@@ -45,3 +45,11 @@
 - Takeaway: temperature 0 and a fixed seed reduce variation but do not remove it. Report results as single runs
   or repeat each form several times. The checker matches phrases, not meaning ("not recommended" passed,
   "not good for" did not).
+
+## Checker scores against hand annotations (saved v5_1 outputs, python -m src.metrics)
+- sample_form: TP 3, FP 0, FN 2; precision 1.0, recall 0.60, F1 0.75.
+- Ankara form: TP 4, FP 0, FN 4; precision 1.0, recall 0.50, F1 0.667 (was 0.222 before the list-marker fix).
+- Overall: TP 7, FP 0, FN 6; precision 1.0, recall 0.538, F1 0.70.
+- The checker raised no false alarms but found only about half of the annotated problems.
+- Limits: two forms, 13 annotated problems, one annotator, saved outputs from one run each.
+- Saved in results/metrics_v5_1.json.
