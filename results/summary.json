@@ -1,0 +1,24 @@
+[
+  {
+    "form": "laparoscopic_cholecystectomy_ankara.txt",
+    "grade_before": 10.5,
+    "grade_after": 9.8,
+    "passed": false,
+    "missing_numbers": 25,
+    "possible_fabricated_numbers": 0,
+    "number_risk_mismatches": 0,
+    "missing_key_terms": 0,
+    "frequency_changes": 0
+  },
+  {
+    "form": "sample_form.txt",
+    "grade_before": 16.1,
+    "grade_after": 13.1,
+    "passed": false,
+    "missing_numbers": 0,
+    "possible_fabricated_numbers": 0,
+    "number_risk_mismatches": 0,
+    "missing_key_terms": 5,
+    "frequency_changes": 0
+  }
+]
