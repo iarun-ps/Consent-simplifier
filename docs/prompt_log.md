@@ -53,3 +53,16 @@
 - The checker raised no false alarms but found only about half of the annotated problems.
 - Limits: two forms, 13 annotated problems, one annotator, saved outputs from one run each.
 - Saved in results/metrics_v5_1.json.
+
+## Third form: cataract_surgery_nhs.txt (prompt v5.1, llama3.2:3b)
+- Readability: Flesch reading ease 41.0 -> 44.6, Flesch-Kincaid grade 13.5 -> 12.3 (small change; the model mostly copied the text).
+- Checker output: no missing or invented numbers; one frequency flag ("very rare" dropped for infection).
+- Manual check: the flag looks like a false positive. "Very rare - Extremely unlikely to happen (less than 1 in 1000)"
+  is still directly above the infection item. Likely cause: the simplified text uses bullets, the original does not.
+- All four frequency groups and the figures "1 in 20", "1 in 100" and "1 in 1000" were kept.
+- Real differences found by hand: "Cataract surgery involves replacing..." became "We will replace..."; the heading
+  "Discomfort" was dropped; "The risks quoted in this consent form" was shortened.
+- Hard terms (endophthalmitis, suprachoroidal haemorrhage, sympathetic ophthalmia, cystoid macular oedema) were not explained
+  because they are not in the glossary.
+- Takeaway: on a form that is already written for patients the model copies instead of simplifying, so checker results
+  depend on how much the model changes the text.

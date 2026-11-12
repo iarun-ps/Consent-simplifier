@@ -1,0 +1,28 @@
+{
+  "readability_before": {
+    "flesch_reading_ease": 40.95900941182967,
+    "flesch_kincaid_grade": 13.464047362755654
+  },
+  "readability_after": {
+    "flesch_reading_ease": 44.61368770764122,
+    "flesch_kincaid_grade": 12.253599114064233
+  },
+  "preservation_report": {
+    "missing_numbers": [],
+    "possible_fabricated_numbers": [],
+    "number_risk_mismatches": [],
+    "missing_key_terms": [],
+    "frequency_changes": [
+      {
+        "term": "infection",
+        "kind": "dropped",
+        "original": [
+          "very rare"
+        ],
+        "simplified": []
+      }
+    ],
+    "missing_qualifiers": [],
+    "passed": false
+  }
+}
