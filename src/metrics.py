@@ -17,7 +17,7 @@ RUNS = {
     ),
     ("laparoscopic_cholecystectomy_ankara", "v5_1"): (
         "data/original/laparoscopic_cholecystectomy_ankara.txt",
-        "data/simplified/laparoscopic_cholecystectomy_ankara_simplified.txt",
+        "tests/fixtures/v5_1_laparoscopic_cholecystectomy_ankara.txt",
     ),
 }
 
