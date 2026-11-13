@@ -1,10 +1,21 @@
 [
   {
+    "form": "cataract_surgery_nhs.txt",
+    "grade_before": 13.5,
+    "grade_after": 12.3,
+    "passed": false,
+    "missing_numbers": 0,
+    "possible_fabricated_numbers": 0,
+    "number_risk_mismatches": 0,
+    "missing_key_terms": 0,
+    "frequency_changes": 1
+  },
+  {
     "form": "laparoscopic_cholecystectomy_ankara.txt",
     "grade_before": 10.5,
-    "grade_after": 9.8,
+    "grade_after": 11.0,
     "passed": false,
-    "missing_numbers": 25,
+    "missing_numbers": 1,
     "possible_fabricated_numbers": 0,
     "number_risk_mismatches": 0,
     "missing_key_terms": 0,

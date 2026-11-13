@@ -1,0 +1,41 @@
+{
+  "cataract_surgery_nhs": {
+    "runs": 3,
+    "distinct_texts": 1,
+    "grade_after_mean": 12.25,
+    "grade_after_sd": 0.0,
+    "flags_mean": 0,
+    "flags_sd": 0.0,
+    "flags_min": 0,
+    "flags_max": 0,
+    "flags_in_every_run": 0,
+    "flags_in_some_runs_only": 0,
+    "flag_agreement_jaccard": 1.0
+  },
+  "laparoscopic_cholecystectomy_ankara": {
+    "runs": 3,
+    "distinct_texts": 1,
+    "grade_after_mean": 9.79,
+    "grade_after_sd": 0.0,
+    "flags_mean": 4,
+    "flags_sd": 0.0,
+    "flags_min": 4,
+    "flags_max": 4,
+    "flags_in_every_run": 4,
+    "flags_in_some_runs_only": 0,
+    "flag_agreement_jaccard": 1.0
+  },
+  "sample_form": {
+    "runs": 3,
+    "distinct_texts": 1,
+    "grade_after_mean": 13.91,
+    "grade_after_sd": 0.0,
+    "flags_mean": 3,
+    "flags_sd": 0.0,
+    "flags_min": 3,
+    "flags_max": 3,
+    "flags_in_every_run": 3,
+    "flags_in_some_runs_only": 0,
+    "flag_agreement_jaccard": 1.0
+  }
+}

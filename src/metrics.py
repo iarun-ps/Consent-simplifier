@@ -19,6 +19,10 @@ RUNS = {
         "data/original/laparoscopic_cholecystectomy_ankara.txt",
         "tests/fixtures/v5_1_laparoscopic_cholecystectomy_ankara.txt",
     ),
+    ("cataract_surgery_nhs", "v5_1"): (
+        "data/original/cataract_surgery_nhs.txt",
+        "tests/fixtures/v5_1_cataract_surgery_nhs.txt",
+    ),
 }
 
 

@@ -231,3 +231,15 @@ def test_report_includes_missing_qualifiers():
         {"qualifier": "only/solely", "original": 1, "simplified": 0}
     ]
     assert result["passed"] is False
+
+def test_frequency_heading_applies_to_bulleted_risk():
+    original = (
+        "Very rare - Extremely unlikely to happen (less than 1 in 1000)\n"
+        "Infection (endophthalmitis) or bleeding inside the eye."
+    )
+    simplified = (
+        "Very rare - Extremely unlikely to happen (less than 1 in 1000)\n"
+        "• Infection (endophthalmitis) or bleeding inside the eye."
+    )
+
+    assert find_frequency_changes(original, simplified) == []

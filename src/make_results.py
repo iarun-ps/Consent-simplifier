@@ -45,6 +45,17 @@ def build_rows(summary, metrics, repeat) -> list[dict]:
             "recall": scores.get(stem, {}).get("recall", ""),
             "f1": scores.get(stem, {}).get("f1", ""),
         }
+        if stem == "cataract_surgery_nhs":
+            score = scores.get(stem, {})
+            if (
+                score.get("true_positives") == 0
+                and score.get("false_positives") == 0
+                and score.get("false_negatives") == 0
+            ):
+                row["precision"] = "N/A"
+                row["recall"] = "N/A"
+                row["f1"] = "N/A"
+
         rep = (repeat or {}).get(stem)
         row["repeat_runs"] = rep["runs"] if rep else ""
         row["repeat_grade_sd"] = rep["grade_after_sd"] if rep else ""
@@ -59,7 +70,11 @@ def build_rows(summary, metrics, repeat) -> list[dict]:
 
 
 def chart_prf1(rows) -> None:
-    data = [r for r in rows if r.get("f1") != ""]
+    data = [
+        r for r in rows
+        if r.get("f1") not in ("", None, "N/A")
+        and r["form"] != "cataract_surgery_nhs"
+    ]
     if not data:
         return
     names = [r["form"].replace("_", "\n") for r in data]

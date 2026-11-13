@@ -287,14 +287,44 @@ def _nearest_term(terms: list[tuple[int, str]], position: int) -> str | None:
 
 
 def _frequency_by_term(text: str, use_original_wording: bool) -> dict[str, list[str]]:
-    """Map each key term to the frequency words that belong to it."""
+    """Associate risk frequencies with individual risks and frequency headings."""
     linked: dict[str, list[str]] = {}
-    for unit in _split_units(text):
-        terms = sorted(_term_positions(unit, use_original_wording))
-        for position, word in _frequency_words(unit):
-            term = _nearest_term(terms, position)
-            if term:
-                linked.setdefault(term, []).append(word)
+    active_frequency = None
+
+    for line in _remove_list_markers(text).splitlines():
+        stripped = line.strip()
+
+        if not stripped:
+            active_frequency = None
+            continue
+
+        # Detect standalone frequency headings.
+        heading = re.match(
+            r"^(very rare|extremely rare|rare|uncommon|common|very common|expected)\\b",
+            stripped,
+            re.IGNORECASE,
+        )
+
+        if heading and not _term_positions(stripped, use_original_wording):
+            active_frequency = heading.group(1).lower()
+            continue
+
+        # Process each sentence separately.
+        for unit in _split_units(stripped):
+            terms = sorted(_term_positions(unit, use_original_wording))
+            frequencies = _frequency_words(unit)
+
+            if terms and frequencies:
+                for position, word in frequencies:
+                    term = _nearest_term(terms, position)
+                    if term:
+                        linked.setdefault(term, []).append(word)
+
+            elif terms and active_frequency:
+                for _, term in terms:
+                    if active_frequency in FREQUENCY_WORDS:
+                        linked.setdefault(term, []).append(active_frequency)
+
     return linked
 
 
