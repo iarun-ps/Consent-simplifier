@@ -1,0 +1,5 @@
+form,grade_before,grade_after,fabricated_numbers,missing_numbers,missing_key_terms,precision,recall,f1,repeat_runs,repeat_grade_sd,repeat_flags_mean,repeat_flags_sd,repeat_agreement
+cataract_surgery_nhs,13.5,12.3,0,0,0,N/A,N/A,N/A,3,0.0,0,0.0,1.0
+laparoscopic_cholecystectomy_ankara,10.5,11.0,0,1,0,1.0,0.5,0.667,3,0.0,4,0.0,1.0
+sample_form,16.1,13.1,0,0,5,1.0,0.6,0.75,3,0.0,3,0.0,1.0
+overall,,,,,,1.0,0.538,0.7,,,,,
